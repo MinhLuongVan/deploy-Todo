@@ -8,7 +8,6 @@ const userRouter = require('./router/userRouter')
 const todoRouter = require('./router/todoRouter')
 const env = require("./utils/myVariable")
 const app = express()
-const MONGODB = env.MONGODB;
 const CLIENT_HOST = env.CLIENT_HOST;
 
 const corsOptions = {
@@ -23,16 +22,18 @@ app.use(cookieParser())
 app.use('/i1/auth',authRouter);
 app.use('/i1/user',userRouter);
 app.use('/td1/list',todoRouter);
+const url = "mongodb://" + env.dbUserName + ":" + env.dbPassword + "@" + env.dbHostName + ":" + env.dbPort + "/" + env.dbName + ""
+mongoose.set('autoCreate', true);
 const connectdb = async() => {
     try {
-        await mongoose.connect(MONGODB) 
+        await mongoose.connect(url);
+          console.log("Kết nối thành công");
     } catch (error) {
         console.log("Kết nối thất bại");
     }
 }
-connectdb().then(() => {
-    console.log("Kết nối thành công");
-});
+connectdb();
+
 app.listen(8000,() => {
     console.log(`server run on 8000`);
 });
